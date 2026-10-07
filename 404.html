@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Page not found | ASL for Teachers</title>
+<script>
+(function () {
+  var m = location.pathname.match(/^(.*\/)([a-z]+)\.html$/);
+  if (m) { location.replace(m[1] + (m[2] === "index" ? "" : m[2] + "/") + location.search + location.hash); }
+})();
+</script>
+<style>body{font-family:system-ui,sans-serif;background:#F7F1F2;color:#3B2620;display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0;text-align:center}a{color:#861B2E;font-weight:700}</style>
+</head><body><div><h1>Page not found</h1><p>The page you were looking for is not here.</p><p><a id="home" href="./">Go to the home page</a></p></div><script>var seg=location.pathname.split("/")[1];document.getElementById("home").href=(location.hostname.endsWith("github.io")&&seg)?"/"+seg+"/":"/";</script></body></html>

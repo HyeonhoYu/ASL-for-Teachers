@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learn | ASL for Teachers</title>
+<meta name="description" content="American Sign Language and Deaf culture for preservice teachers.">
+<link rel="icon" href="../images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header id="site-header"></header>
+<main id="main">
+
+<div class="container">
+  <section class="section stack" style="gap:28px">
+    <div class="stack" style="gap:8px">
+      <h1 style="font-size:clamp(36px,5vw,56px)">Learn</h1>
+      <p class="muted" style="font-size:20px">Work through the modules in order. Each one builds on the last.</p>
+    </div>
+    <div class="grid" id="modules"></div>
+  </section>
+</div>
+</main>
+<footer id="site-footer"></footer>
+<script>const ROOT = "../";</script>
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
+<script>
+renderChrome("learn");
+
+document.getElementById("modules").innerHTML = MODULES.map(moduleCardHTML).join("");
+
+initFallbacks();
+</script>
+</body>
+</html>

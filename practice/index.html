@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice | ASL for Teachers</title>
+<meta name="description" content="American Sign Language and Deaf culture for preservice teachers.">
+<link rel="icon" href="../images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header id="site-header"></header>
+<main id="main">
+
+<div class="container">
+  <section class="section stack" style="gap:28px">
+    <div class="row" style="gap:24px">
+      <img src="../images/jump.webp" alt="" style="width:110px">
+      <div class="stack" style="flex:1 1 400px;gap:8px">
+        <h1 style="font-size:clamp(36px,5vw,56px)">Practice</h1>
+        <p class="muted" style="font-size:20px">Use what you learned in real classroom moments.</p>
+      </div>
+    </div>
+    <div class="grid">
+      <a class="card" href="../quiz/"><h3>Quiz</h3><p class="muted small">Ten questions. Read the sign card and choose the sign.</p></a>
+      <a class="card" href="../mirror/"><h3>Mirror Practice</h3><p class="muted small">Sign along with the sign card using your webcam. Nothing is recorded.</p></a>
+    </div>
+  </section>
+  <section class="lesson-section" id="scenarios">
+    <div class="lesson-head"><h2>Classroom scenarios</h2></div>
+    <div class="grid" id="scen"></div>
+  </section>
+</div>
+</main>
+<footer id="site-footer"></footer>
+<script>const ROOT = "../";</script>
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
+<script>
+renderChrome("practice");
+
+document.getElementById("scen").innerHTML = SCENARIOS.map(x => `
+  <a class="card" href="${u(`scenario/?s=${x.id}`)}"><h3>${esc(x.title)}</h3><p class="muted small">${esc(x.context)}</p><span class="pill pill-leaf" style="align-self:flex-start">${x.signs.length} signs</span></a>`).join("");
+if (location.hash) { const t = document.querySelector(location.hash); if (t) t.scrollIntoView(); }
+
+initFallbacks();
+</script>
+</body>
+</html>

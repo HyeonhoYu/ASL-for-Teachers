@@ -228,3 +228,39 @@ input[type="text"], input[type="search"], select { font: inherit; padding: 12px 
 .nav a.btn-primary { color: #fff; background: var(--red); }
 .nav a.btn-primary:hover { background: var(--red-deep); }
 .feature-card .gloss { font-size: clamp(30px, 3.4vw, 44px); overflow-wrap: anywhere; }
+
+/* Pictures with placeholders */
+.pic { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+.pic img { width: 100%; height: 100%; object-fit: cover; }
+.pic .ph { display: none; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; padding: 10px; }
+.pic.missing img { display: none; }
+.pic.missing .ph { display: flex; }
+
+/* Sign card (recipe) */
+.recipe { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.recipe .part { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.part-label { font-weight: 700; font-size: 15px; color: var(--red-deep); }
+.part-name { font-family: var(--display); font-weight: 600; font-size: 20px; line-height: 1.2; }
+.part-tip { font-size: 15px; color: var(--muted); }
+.recipe .hand, .recipe .face { aspect-ratio: 1; border-radius: 18px; overflow: hidden; background: repeating-linear-gradient(135deg, #E4F0DC 0 12px, #EDF5E7 12px 24px); }
+.recipe .face { background: #EFE9EB; border-radius: 999px; width: 70%; align-self: center; }
+.recipe .hand .ph strong { font-family: var(--display); font-size: 20px; color: #2E4A26; }
+.recipe .hand .ph small { font-size: 13px; color: #4D5E44; }
+.recipe .face .ph { font-weight: 700; font-size: 15px; color: var(--ink-soft); }
+.bodymap { width: 100%; max-height: 220px; display: block; }
+.bodymap.small { max-height: none; height: 100%; }
+.movemap { width: 100%; display: block; background: var(--ground); border-radius: 18px; }
+.recipe.compound { grid-template-columns: 2fr 1fr; }
+@media (max-width: 640px) { .recipe.compound { grid-template-columns: 1fr; } }
+.chunk { padding: 12px 18px; border-radius: 16px; background: var(--leaf-tint); font-family: var(--display); font-weight: 700; font-size: 24px; }
+.plus { font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--muted); }
+.thumb { padding: 6px; }
+.thumb-compound { font-family: var(--display); font-weight: 700; font-size: 17px; color: #2E4A26; text-align: center; padding: 8px; }
+.ref-btn { align-self: flex-start; }
+.ref-note { font-size: 14px; color: var(--muted); }
+.tile .pic { aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; background: repeating-linear-gradient(135deg, #E4F0DC 0 12px, #EDF5E7 12px 24px); }
+.tile .ph { font-family: var(--display); font-weight: 700; font-size: 40px; color: #2E4A26; }
+.spell-row .tile { width: 110px; }
+.spell-row .tile.active .pic { outline: 4px solid var(--gold); outline-offset: 2px; }
+.hs-card .pic { aspect-ratio: 1; border-radius: 18px; overflow: hidden; background: repeating-linear-gradient(135deg, #E4F0DC 0 12px, #EDF5E7 12px 24px); }
+.hs-card .ph { font-family: var(--display); font-weight: 700; font-size: 18px; color: #2E4A26; }

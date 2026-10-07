@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module | ASL for Teachers</title>
+<meta name="description" content="American Sign Language and Deaf culture for preservice teachers.">
+<link rel="icon" href="../images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header id="site-header"></header>
+<main id="main">
+
+<div class="container" id="module"></div>
+</main>
+<footer id="site-footer"></footer>
+<script>const ROOT = "../";</script>
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
+<script>
+renderChrome("learn");
+
+const m = moduleById(param("m")) || MODULES[0];
+document.title = `${m.title} | ASL for Teachers`;
+const root = document.getElementById("module");
+function doneButton(key) {
+  const on = isLessonDone(key);
+  return `<button class="btn btn-small toggle learned" data-lesson="${key}" aria-pressed="${on}">${on ? "Lesson done" : "Mark lesson done"}</button>`;
+}
+function tile(src, label) { return `<span class="tile">${picHTML(src, esc(label), label)}</span>`; }
+function lessonBody(l) {
+  const key = `m${m.id}-${l.id}`;
+  if (l.type === "signs") {
+    const list = SIGNS.filter(s => s.category === l.id);
+    return `<div class="lesson-head"><h2>${esc(l.title)}</h2><span class="muted small">${list.length} signs</span></div>
+      <div class="grid-sm">${list.map(signCardHTML).join("")}</div>`;
+  }
+  if (l.type === "handshapes") {
+    return `<div class="lesson-head"><h2>${esc(l.title)}</h2>${doneButton(key)}</div>
+      <p class="muted" style="margin-bottom:16px;max-width:760px">These handshapes build every sign on this site. Try each one with your own hand and check it against the description.</p>
+      <div class="grid-sm" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">${Object.entries(HANDSHAPES).map(([id, h]) => `
+        <div class="card hs-card stack" style="padding:14px;gap:8px;border-radius:20px">
+          ${picHTML(`images/handshapes/${id}.webp`, esc(h.name), h.name)}
+          <span style="font-family:var(--display);font-weight:600;font-size:19px">${esc(h.name)}</span>
+          <span class="muted small">${esc(h.tip)}</span>
+        </div>`).join("")}</div>`;
+  }
+  if (l.type === "letters") {
+    return `<div class="lesson-head"><h2>${esc(l.title)}</h2>${doneButton(key)}</div>
+      <p class="muted" style="margin-bottom:16px">Practice each letter slowly. Keep your hand at shoulder height, palm facing out.</p>
+      <div class="grid-sm" style="grid-template-columns:repeat(auto-fill,minmax(110px,1fr))">${LETTERS.map(c => tile(`images/letters/${c.toLowerCase()}.webp`, c)).join("")}</div>`;
+  }
+  if (l.type === "numbers") {
+    return `<div class="lesson-head"><h2>${esc(l.title)}</h2>${doneButton(key)}</div>
+      <div class="grid-sm" style="grid-template-columns:repeat(auto-fill,minmax(110px,1fr))">${NUMBERS.map(n => tile(`images/numbers/${n}.webp`, String(n))).join("")}</div>`;
+  }
+  if (l.type === "names") {
+    return `<div class="lesson-head"><h2>${esc(l.title)}</h2>${doneButton(key)}</div>
+      <div class="stack" style="max-width:760px">
+        <p class="muted">Type a student's name and fingerspell along, letter by letter. Fingerspell smoothly, with a slight pause between letters, not a bounce on each one.</p>
+        <div class="row" style="align-items:flex-end">
+          <div class="field" style="flex:1 1 260px"><label for="nameInput">Name to practice</label><input id="nameInput" type="text" placeholder="For example, Maya" maxlength="20" autocomplete="off"></div>
+          <label class="field" style="flex:0 0 auto">Speed<select id="nameSpeed"><option value="1200">Slow</option><option value="800" selected>Medium</option><option value="500">Fast</option></select></label>
+          <button class="btn btn-primary" id="namePlay">Play</button>
+        </div>
+        <div class="spell-row" id="nameRow" aria-live="polite"></div>
+      </div>`;
+  }
+  return `<div class="lesson-head"><h2>${esc(l.title)}</h2>${doneButton(key)}</div><div class="lesson-text">${l.html}</div>`;
+}
+const idx = MODULES.indexOf(m);
+const next = MODULES[idx + 1];
+root.innerHTML = `
+  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="${u("learn/")}">Learn</a><span aria-hidden="true">/</span><span style="color:#3B2620;font-weight:700">Module ${m.id}</span></nav>
+  <section class="section" style="padding-bottom:24px">
+    <div class="row" style="gap:28px">
+      <img src="${u(m.image)}" alt="" style="width:170px">
+      <div class="stack" style="flex:1 1 420px;gap:10px">
+        <span class="pill pill-leaf" style="align-self:flex-start">Module ${m.id}</span>
+        <h1 style="font-size:clamp(36px,5vw,56px)">${esc(m.title)}</h1>
+        <p class="muted" style="font-size:20px">${esc(m.blurb)}</p>
+        <nav class="row" aria-label="Lessons" style="gap:8px">${m.lessons.map(l => `<a class="btn btn-small btn-outline" href="#${l.id}">${esc(l.title)}</a>`).join("")}</nav>
+      </div>
+    </div>
+  </section>
+  ${m.lessons.map(l => `<section class="lesson-section" id="${l.id}">${lessonBody(l)}</section>`).join("")}
+  <div class="pager" style="padding-top:24px">
+    ${next ? `<a class="next" href="${u(`module/?m=${next.id}`)}"><span>Next module</span>${esc(next.title)}</a>` : `<a class="next" href="${u("practice/")}"><span>Next</span>Practice</a>`}
+  </div>`;
+root.querySelectorAll("[data-lesson]").forEach(b => b.addEventListener("click", () => {
+  const on = b.getAttribute("aria-pressed") !== "true";
+  setLessonDone(b.dataset.lesson, on);
+  b.setAttribute("aria-pressed", String(on));
+  b.textContent = on ? "Lesson done" : "Mark lesson done";
+}));
+const playBtn = document.getElementById("namePlay");
+if (playBtn) {
+  let timer = null;
+  playBtn.addEventListener("click", () => {
+    const name = document.getElementById("nameInput").value.toUpperCase().replace(/[^A-Z]/g, "");
+    const row = document.getElementById("nameRow");
+    clearInterval(timer);
+    if (!name) { row.innerHTML = '<p class="muted">Type a name using letters A to Z.</p>'; return; }
+    row.innerHTML = name.split("").map(c => tile(`images/letters/${c.toLowerCase()}.webp`, c)).join("");
+    initFallbacks(row);
+    const tiles = [...row.querySelectorAll(".tile")];
+    let i = 0;
+    const step = () => {
+      tiles.forEach((t, j) => t.classList.toggle("active", j === i));
+      i++;
+      if (i > tiles.length) { clearInterval(timer); tiles.forEach(t => t.classList.remove("active")); }
+    };
+    step();
+    timer = setInterval(step, Number(document.getElementById("nameSpeed").value));
+  });
+}
+if (location.hash) { const t = document.querySelector(location.hash); if (t) t.scrollIntoView(); }
+
+initFallbacks();
+</script>
+</body>
+</html>

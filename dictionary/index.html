@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign Dictionary | ASL for Teachers</title>
+<meta name="description" content="American Sign Language and Deaf culture for preservice teachers.">
+<link rel="icon" href="../images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header id="site-header"></header>
+<main id="main">
+
+<div class="container">
+  <section class="section stack" style="gap:24px">
+    <div class="stack" style="gap:8px">
+      <h1 style="font-size:clamp(36px,5vw,56px)">Sign Dictionary</h1>
+      <p class="muted" style="font-size:20px">Look up any sign on the site by word, category, or handshape.</p>
+    </div>
+    <div class="row" style="align-items:flex-end">
+      <div class="field" style="flex:2 1 300px"><label for="q">Search</label><input id="q" type="search" placeholder="Try help, wait, or happy" autocomplete="off"></div>
+      <div class="field" style="flex:1 1 200px"><label for="cat">Category</label><select id="cat"><option value="">All categories</option></select></div>
+      <div class="field" style="flex:1 1 200px"><label for="hs">Handshape</label><select id="hs"><option value="">All handshapes</option></select></div>
+    </div>
+    <p class="muted small" id="count" aria-live="polite"></p>
+    <div class="grid-sm" id="results"></div>
+  </section>
+</div>
+</main>
+<footer id="site-footer"></footer>
+<script>const ROOT = "../";</script>
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
+<script>
+renderChrome("dictionary");
+
+const sel = document.getElementById("cat"), hs = document.getElementById("hs");
+MODULES[1].lessons.forEach(l => sel.insertAdjacentHTML("beforeend", `<option value="${l.id}">${esc(l.title)}</option>`));
+Object.entries(HANDSHAPES).forEach(([id, h]) => hs.insertAdjacentHTML("beforeend", `<option value="${id}">${esc(h.name)}</option>`));
+function run() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const list = SIGNS.filter(s => (!sel.value || s.category === sel.value) && (!hs.value || (s.recipe && s.recipe.hand === hs.value)) && (!q || (s.gloss + " " + s.meaning).toLowerCase().includes(q)))
+    .sort((a, b) => a.gloss.localeCompare(b.gloss));
+  document.getElementById("results").innerHTML = list.length ? list.map(signCardHTML).join("") : '<p class="muted">No signs match. Try a different word.</p>';
+  document.getElementById("count").textContent = `${list.length} of ${SIGNS.length} signs`;
+}
+document.getElementById("q").addEventListener("input", run);
+sel.addEventListener("change", run); hs.addEventListener("change", run);
+run();
+
+initFallbacks();
+</script>
+</body>
+</html>
