@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign | ASL for Teachers</title>
+<meta name="description" content="American Sign Language and Deaf culture for preservice teachers.">
+<link rel="icon" href="images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header id="site-header"></header>
+<main id="main">
+
+<div class="container" id="sign"></div>
+</main>
+<footer id="site-footer"></footer>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+renderChrome("learn");
+
+const s = signById(param("id")) || SIGNS[0];
+document.title = `${s.gloss} | ASL for Teachers`;
+const list = SIGNS.filter(x => x.category === s.category);
+const i = list.indexOf(s);
+const prev = list[i - 1], next = list[i + 1];
+const f = s.form;
+const formHTML = f ? `
+  <dl class="form-list">
+    <div><dt>Handshape</dt><dd>${esc(f.handshape)}</dd></div>
+    <div><dt>Location</dt><dd>${esc(f.location)}</dd></div>
+    <div><dt>Movement</dt><dd>${esc(f.movement)}</dd></div>
+    <div><dt>Facial expression</dt><dd>${esc(f.face)}</dd></div>
+  </dl>` : `<p style="padding:0 24px 18px">${esc(s.summary)}</p>`;
+const learned = isLearned(s.id);
+
+document.getElementById("sign").innerHTML = `
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="learn.html">Learn</a><span aria-hidden="true">/</span>
+    <a href="module.html?m=2">Module 2: Classroom Signs</a><span aria-hidden="true">/</span>
+    <a href="module.html?m=2#${s.category}">${esc(lessonTitle(s.category))}</a><span aria-hidden="true">/</span>
+    <span style="color:#3B2620;font-weight:700">${esc(s.gloss)}</span>
+  </nav>
+  <div class="detail">
+    <section class="media" aria-label="Sign video">
+      <div id="playerBox" class="stack">${videoPlayerHTML(s.id, s.gloss)}</div>
+      <div class="row" style="gap:12px">
+        <a class="btn btn-primary" href="mirror.html?id=${s.id}">Practice in the mirror</a>
+        <button class="btn toggle learned" id="learnedBtn" aria-pressed="${learned}">${learned ? "Learned" : "Mark as learned"}</button>
+      </div>
+    </section>
+    <section class="info" aria-label="About this sign">
+      <div class="stack" style="gap:8px">
+        <span class="pill pill-leaf" style="align-self:flex-start">${esc(lessonTitle(s.category))}</span>
+        <div class="gloss-title"><h1>${esc(s.gloss)}</h1><img src="images/read.webp" alt=""></div>
+        <p style="font-size:21px;color:#5A4640">English meaning: ${esc(s.meaning)}.</p>
+      </div>
+      <div class="box">
+        <h2>How to form it</h2>
+        ${formHTML}
+        ${s.reviewed ? "" : '<p class="draft-note">[Draft description, to be reviewed by ASL consultant]</p>'}
+      </div>
+      <div class="stack" style="gap:12px">
+        <h2 style="font-size:20px;font-family:var(--body)">In the classroom</h2>
+        <ul class="uses">${(s.classroom || []).map(c => `<li>${esc(c)}</li>`).join("")}</ul>
+      </div>
+      ${s.tip ? `<div class="tip"><img src="images/wink.webp" alt=""><p><strong>Frog Baby's tip.</strong> ${esc(s.tip)}</p></div>` : ""}
+    </section>
+  </div>
+  ${(s.related || []).length ? `
+  <section class="stack" style="padding-bottom:40px">
+    <h2 style="font-size:30px">Related signs</h2>
+    <div class="grid-sm">${s.related.map(signById).filter(Boolean).map(signCardHTML).join("")}</div>
+  </section>` : ""}
+  <nav class="pager" aria-label="Lesson navigation">
+    ${prev ? `<a href="sign.html?id=${prev.id}"><span>Previous sign</span>${esc(prev.gloss)}</a>` : ""}
+    ${next ? `<a class="next" href="sign.html?id=${next.id}"><span>Next sign</span>${esc(next.gloss)}</a>` : `<a class="next" href="module.html?m=2#${s.category}"><span>Back to</span>${esc(lessonTitle(s.category))}</a>`}
+  </nav>`;
+initVideoPlayer(document.getElementById("playerBox"));
+initThumbs();
+const lb = document.getElementById("learnedBtn");
+lb.addEventListener("click", () => {
+  const on = lb.getAttribute("aria-pressed") !== "true";
+  setLearned(s.id, on);
+  lb.setAttribute("aria-pressed", String(on));
+  lb.textContent = on ? "Learned" : "Mark as learned";
+});
+
+</script>
+</body>
+</html>
