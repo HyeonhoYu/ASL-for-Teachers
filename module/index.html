@@ -32,7 +32,7 @@ function doneButton(key) {
   const on = isLessonDone(key);
   return `<button class="btn btn-small toggle learned" data-lesson="${key}" aria-pressed="${on}">${on ? "Lesson done" : "Mark lesson done"}</button>`;
 }
-function tile(src, label) { return `<span class="tile">${picHTML(src, esc(label), label)}</span>`; }
+function tile(src, label, note) { return `<span class="tile">${picHTML(src, esc(label), `ASL ${label}`)}<span class="tile-label">${esc(label)}</span>${note ? `<span class="tile-note">${esc(note)}</span>` : ""}</span>`; }
 function lessonBody(l) {
   const key = `m${m.id}-${l.id}`;
   if (l.type === "signs") {
@@ -42,10 +42,10 @@ function lessonBody(l) {
   }
   if (l.type === "handshapes") {
     return `<div class="lesson-head"><h2>${esc(l.title)}</h2>${doneButton(key)}</div>
-      <p class="muted" style="margin-bottom:16px;max-width:760px">These handshapes build every sign on this site. Try each one with your own hand and check it against the description.</p>
-      <div class="grid-sm" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">${Object.entries(HANDSHAPES).map(([id, h]) => `
+      <p class="muted" style="margin-bottom:16px;max-width:760px">These handshapes build every sign on this site. Each picture shows a right hand as you see it on someone facing you. Try each one with your own hand and check it against the description.</p>
+      <div class="grid-sm" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">${HANDSHAPE_ORDER.map(id => [id, HANDSHAPES[id]]).map(([id, h]) => `
         <div class="card hs-card stack" style="padding:14px;gap:8px;border-radius:20px">
-          ${picHTML(`images/handshapes/${id}.webp`, esc(h.name), h.name)}
+          ${picHTML(`images/handshapes/${id}.svg`, esc(h.name), h.name)}
           <span style="font-family:var(--display);font-weight:600;font-size:19px">${esc(h.name)}</span>
           <span class="muted small">${esc(h.tip)}</span>
         </div>`).join("")}</div>`;
@@ -53,11 +53,11 @@ function lessonBody(l) {
   if (l.type === "letters") {
     return `<div class="lesson-head"><h2>${esc(l.title)}</h2>${doneButton(key)}</div>
       <p class="muted" style="margin-bottom:16px">Practice each letter slowly. Keep your hand at shoulder height, palm facing out.</p>
-      <div class="grid-sm" style="grid-template-columns:repeat(auto-fill,minmax(110px,1fr))">${LETTERS.map(c => tile(`images/letters/${c.toLowerCase()}.webp`, c)).join("")}</div>`;
+      <div class="grid-sm" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr))">${LETTERS.map(c => tile(`images/letters/${c.toLowerCase()}.svg`, c, LETTER_NOTES[c])).join("")}</div>`;
   }
   if (l.type === "numbers") {
     return `<div class="lesson-head"><h2>${esc(l.title)}</h2>${doneButton(key)}</div>
-      <div class="grid-sm" style="grid-template-columns:repeat(auto-fill,minmax(110px,1fr))">${NUMBERS.map(n => tile(`images/numbers/${n}.webp`, String(n))).join("")}</div>`;
+      <div class="grid-sm" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr))">${NUMBERS.map(n => tile(`images/numbers/${n}.svg`, String(n), NUMBER_NOTES[n])).join("")}</div>`;
   }
   if (l.type === "names") {
     return `<div class="lesson-head"><h2>${esc(l.title)}</h2>${doneButton(key)}</div>
@@ -106,7 +106,7 @@ if (playBtn) {
     const row = document.getElementById("nameRow");
     clearInterval(timer);
     if (!name) { row.innerHTML = '<p class="muted">Type a name using letters A to Z.</p>'; return; }
-    row.innerHTML = name.split("").map(c => tile(`images/letters/${c.toLowerCase()}.webp`, c)).join("");
+    row.innerHTML = name.split("").map(c => tile(`images/letters/${c.toLowerCase()}.svg`, c)).join("");
     initFallbacks(row);
     const tiles = [...row.querySelectorAll(".tile")];
     let i = 0;

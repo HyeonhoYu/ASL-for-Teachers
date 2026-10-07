@@ -2,7 +2,7 @@
 
 A website that helps preservice teachers learn everyday classroom signs in American Sign Language (ASL) and the Deaf culture behind them. Guided by the character Frog Baby.
 
-Every sign is shown as a **sign card** with four parts: handshape, location, movement, and face. All pictures and content are created for this project. The only outside material is an optional "See a reference video" button that opens an outside dictionary in a new tab.
+Every sign is shown as a **sign card** with four parts: handshape, location, movement, and face. All pictures and content, including every hand drawing, are created for this project. The only outside material is an optional "See a reference video" button that opens an outside dictionary in a new tab.
 
 This is a plain static website (HTML, CSS, and JavaScript). There is nothing to install or build, so it runs on GitHub Pages as is.
 
@@ -47,18 +47,21 @@ Then open `http://localhost:8000`. (Mirror Practice needs `localhost` or a GitHu
 | `images/` | Frog Baby pictures and your own pictures |
 | `docs/sign-list.md` | The 50 classroom signs as a checklist for review |
 
-## Adding your own pictures
+## Pictures
 
-Pictures are found automatically by file name. Until a picture exists, the card shows a labeled placeholder.
+All pictures are included and made for this project:
 
-| Content | File name |
+| Content | Files |
 | --- | --- |
-| Handshapes | `images/handshapes/<id>.webp`, for example `images/handshapes/5.webp`. Ids are listed in `HANDSHAPES` in `js/data.js`. |
-| Letters | `images/letters/a.webp` to `images/letters/z.webp` |
-| Numbers | `images/numbers/1.webp` to `images/numbers/20.webp` |
-| Frog Baby faces | `images/faces/<id>.webp`. Ids are listed in `FACES` in `js/data.js`. |
+| 15 handshapes | `images/handshapes/<id>.svg` |
+| Alphabet A to Z | `images/letters/a.svg` to `z.svg` |
+| Numbers 1 to 20 | `images/numbers/1.svg` to `20.svg` |
+| Frog Baby faces | `images/faces/<id>.webp` |
+| Frog Baby poses | `images/*.webp` |
 
-Square pictures work best. A photo of your own hand on a plain background is enough. `.webp` keeps files small; if you use `.jpg` or `.png`, change the file ending in `js/app.js` (search for `.webp`).
+The hand pictures are drawn by `tools/draw-hands.py`. Each hand is described in a short table (which fingers are up, bent, or curled, where the thumb is, and any movement arrow). To change a picture, edit its line in the table at the bottom of that file and run `python3 tools/draw-hands.py`. You can also replace any `.svg` file with your own picture under the same name.
+
+The pictures show a right hand as you see it on someone facing you. They are simplified drawings, so a fluent signer should check them, especially letters and numbers with movement (J, Z, 10 to 20).
 
 ## Adding or editing a sign
 

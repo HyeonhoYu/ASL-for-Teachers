@@ -416,3 +416,22 @@ const FACES = {
 /* The "See a reference video" button opens this outside dictionary in a new tab.
    {word} is replaced with the sign's meaning. Check the link works before publishing. */
 const REFERENCE_URL = "https://www.signingsavvy.com/search/{word}";
+
+/* Short notes shown under letter and number pictures (drafts, review before publishing). */
+const LETTER_NOTES = {
+  G: "Point sideways.", H: "Point sideways.", J: "Draw a J with the pinky.",
+  P: "Point down.", Q: "Point down.", Z: "Draw a Z with the index finger."
+};
+const NUMBER_NOTES = {
+  1: "Palm faces you.", 2: "Palm faces you.", 3: "Palm faces you.", 4: "Palm faces you.", 5: "Palm faces you.",
+  6: "Pinky touches thumb.", 7: "Ring finger touches thumb.", 8: "Middle finger touches thumb.", 9: "Index finger touches thumb.",
+  10: "Thumb up, shake the wrist.",
+  11: "Index flicks up off the thumb, twice.", 12: "Index and middle flick up off the thumb, twice.",
+  13: "Palm faces you. Bend index and middle twice.", 14: "Palm faces you. Bend four fingers twice.",
+  15: "Thumb out. Bend four fingers twice.",
+  16: "6 hand, twist the wrist.", 17: "7 hand, twist the wrist.", 18: "8 hand, twist the wrist.", 19: "9 hand, twist the wrist.",
+  20: "Index and thumb snap closed, twice."
+};
+
+/* Display order for handshapes (JavaScript would otherwise list "4" and "5" first). */
+const HANDSHAPE_ORDER = ["flat", "5", "a", "s", "thumb", "index", "v", "h", "w", "4", "t", "bent", "claw", "pinch", "middle"];

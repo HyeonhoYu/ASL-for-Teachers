@@ -41,7 +41,7 @@ renderChrome("dictionary");
 
 const sel = document.getElementById("cat"), hs = document.getElementById("hs");
 MODULES[1].lessons.forEach(l => sel.insertAdjacentHTML("beforeend", `<option value="${l.id}">${esc(l.title)}</option>`));
-Object.entries(HANDSHAPES).forEach(([id, h]) => hs.insertAdjacentHTML("beforeend", `<option value="${id}">${esc(h.name)}</option>`));
+HANDSHAPE_ORDER.forEach(id => { const h = HANDSHAPES[id]; hs.insertAdjacentHTML("beforeend", `<option value="${id}">${esc(h.name)}</option>`); });
 function run() {
   const q = document.getElementById("q").value.trim().toLowerCase();
   const list = SIGNS.filter(s => (!sel.value || s.category === sel.value) && (!hs.value || (s.recipe && s.recipe.hand === hs.value)) && (!q || (s.gloss + " " + s.meaning).toLowerCase().includes(q)))

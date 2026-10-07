@@ -205,7 +205,7 @@ function recipeHTML(s, opts = {}) {
   return `<div class="recipe">
     <div class="part">
       <span class="part-label">1. Handshape</span>
-      <div class="hand">${picHTML(`images/handshapes/${r.hand}.webp`, `<strong>${esc(hand.name)}</strong><small>Add your photo</small>`, hand.name)}</div>
+      <div class="hand">${picHTML(`images/handshapes/${r.hand}.svg`, `<strong>${esc(hand.name)}</strong>`, `${hand.name} handshape`)}</div>
       <p class="part-name">${esc(hand.name)}</p>
       <p class="part-tip">${esc(HANDS_TEXT[r.hands] || "")}${hand.tip ? `. ${esc(hand.tip)}` : ""}</p>
     </div>
