@@ -251,7 +251,7 @@ function moduleCardHTML(m) {
   const label = done === 0 ? `${total} ${unit}` : `${done} of ${total} ${unit} done`;
   return `
     <a class="card module-card" href="${u(`module/?m=${m.id}`)}" style="padding:22px 24px 24px">
-      <span class="top"><span class="num">${m.id}</span><img src="${u(m.image)}" alt=""></span>
+      <span class="top"><span class="num">${m.id}</span><span class="art"><img src="${u(m.image)}" alt=""></span></span>
       <span class="title">${esc(m.title)}</span>
       <span class="muted small">${esc(m.blurb)}</span>
       <span class="foot"><span class="progress"><span style="width:${pct}%"></span></span><span>${label}</span></span>
