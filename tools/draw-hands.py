@@ -2,7 +2,7 @@
 # Run from anywhere with: python3 tools/draw-hands.py
 # Edit the HANDSHAPES, LETTERS, and NUMS tables at the bottom to change a picture.
 import math, os
-SKIN="#F6D3BE"; SHADE="#E9B79C"; INK="#3B2620"; ARROW="#A8243A"
+SKIN="url(#skin)"; SKINFLAT="#F7D6C2"; SHADE="#E7AE92"; INK="#4A2E24"; ARROW="#A8243A"; HI="#FFF4EC"
 OUT=7; W=21  # outline extra, finger width
 
 # finger bases (palm view, thumb on viewer's right)
@@ -14,16 +14,35 @@ TOG={"p":-4,"r":-1.5,"m":1.5,"i":4}
 def pt(base,ang,l):
     a=math.radians(ang); return (base[0]+l*math.sin(a), base[1]-l*math.cos(a))
 
-def stroke(d, w=W):
-    return (f'<path d="{d}" fill="none" stroke="{INK}" stroke-width="{w+OUT}" stroke-linecap="round" stroke-linejoin="round"/>'
-            f'<path d="{d}" fill="none" stroke="{SKIN}" stroke-width="{w}" stroke-linecap="round" stroke-linejoin="round"/>')
+def stroke(d, w=W, hi=True):
+    out=(f'<path d="{d}" fill="none" stroke="{INK}" stroke-width="{w+OUT}" stroke-linecap="round" stroke-linejoin="round"/>'
+         f'<path d="{d}" fill="none" stroke="{SKIN}" stroke-width="{w}" stroke-linecap="round" stroke-linejoin="round"/>')
+    if hi:
+        out+=f'<path d="{d}" fill="none" stroke="{HI}" stroke-opacity=".55" stroke-width="{max(3,w*0.22):.1f}" stroke-linecap="round" stroke-linejoin="round" transform="translate(-{w*0.2:.1f} -1)"/>'
+    return out
 def tip_pad(x,y,r=7):
-    return f'<ellipse cx="{x:.1f}" cy="{y:.1f}" rx="{r}" ry="{r*0.8}" fill="{SHADE}"/>'
+    return f'<ellipse cx="{x:.1f}" cy="{y:.1f}" rx="{r}" ry="{r*0.8}" fill="{SHADE}" opacity=".85"/>'
+def creases(b,t,n=2):
+    # small joint lines across a straight finger
+    out=""
+    for k in range(1,n+1):
+        f=k/(n+1)+0.08
+        x=b[0]+(t[0]-b[0])*f; y=b[1]+(t[1]-b[1])*f
+        dx=t[0]-b[0]; dy=t[1]-b[1]; L=(dx*dx+dy*dy)**.5 or 1
+        px,py=-dy/L*6,dx/L*6
+        out+=f'<path d="M{x-px:.1f} {y-py:.1f} Q{x:.1f} {y+2:.1f} {x+px:.1f} {y+py:.1f}" fill="none" stroke="{SHADE}" stroke-width="2.2" stroke-linecap="round"/>'
+    return out
+def nail(t,b):
+    dx=t[0]-b[0]; dy=t[1]-b[1]; L=(dx*dx+dy*dy)**.5 or 1
+    x=t[0]-dx/L*7; y=t[1]-dy/L*7; ang=math.degrees(math.atan2(dx,-dy))
+    return f'<rect x="{x-5.5:.1f}" y="{y-7:.1f}" width="11" height="13" rx="5" fill="#FBE6DA" stroke="{SHADE}" stroke-width="1.6" transform="rotate({ang:.1f} {x:.1f} {y:.1f})"/>'
 
 def finger(f, state, spread=True, touch=None):
     b=BASE[f]; ang=(SPREAD if spread else TOG)[f]; L=LEN[f]
     if state=="up":
-        t=pt(b,ang,L); return stroke(f"M{b[0]} {b[1]+10} L{t[0]:.1f} {t[1]:.1f}"), ""
+        t=pt(b,ang,L)
+        deco = nail(t,b) if BACKVIEW[0] else creases(b,t)
+        return stroke(f"M{b[0]} {b[1]+10} L{t[0]:.1f} {t[1]:.1f}") + deco, ""
     if state=="cross":   # crossed over the neighbour (R)
         t=pt(b,ang-14,L); return stroke(f"M{b[0]} {b[1]+10} L{t[0]:.1f} {t[1]:.1f}"), ""
     if state in ("hook","bent"):
@@ -34,7 +53,9 @@ def finger(f, state, spread=True, touch=None):
         t=pt(b,ang,L*0.3)
         return "", stroke(f"M{b[0]} {b[1]+6} Q{t[0]:.1f} {t[1]-14:.1f} {b[0]:.1f} {b[1]+28}") + tip_pad(b[0],b[1]+28)
     if state=="curl":
-        return "", stroke(f"M{b[0]} {b[1]-4} L{b[0]} {b[1]+26}", W+1)
+        return "", (stroke(f"M{b[0]} {b[1]-6} L{b[0]} {b[1]+24}", W+1)
+            + f'<path d="M{b[0]-8} {b[1]+8} Q{b[0]} {b[1]+12} {b[0]+8} {b[1]+8}" fill="none" stroke="{SHADE}" stroke-width="2.2" stroke-linecap="round"/>'
+            + tip_pad(b[0], b[1]+22, 6))
     if state=="touch":
         return "", stroke(f"M{b[0]} {b[1]-6} Q{b[0]} {b[1]-20} {b[0]+4} {b[1]+30}", W+1) + tip_pad(b[0]+4,b[1]+30)
     if state=="crossL":
@@ -59,6 +80,7 @@ def thumb(state, touch=None):
 
 def hand(fingers, th, spread=True, touch_f=None, rot=0, back=False, flip=False, extra=""):
     """fingers: dict p,r,m,i -> state. th: thumb state."""
+    BACKVIEW[0]=back
     touch=None
     if touch_f:
         b=BASE[touch_f]; touch=(b[0]+8, b[1]+34)
@@ -69,10 +91,13 @@ def hand(fingers, th, spread=True, touch_f=None, rot=0, back=False, flip=False, 
         behind.append(a); front.append(bfr)
     tsvg,layer=thumb(th,touch)
     palm=(f'<rect x="66" y="178" width="66" height="70" rx="22" fill="{SKIN}" stroke="{INK}" stroke-width="{OUT/2+2}"/>'
-          f'<rect x="56" y="108" width="90" height="92" rx="34" fill="{SKIN}" stroke="{INK}" stroke-width="{OUT/2+2}"/>')
-    crease = '' if back else f'<path d="M78 172 Q100 182 124 168" fill="none" stroke="{SHADE}" stroke-width="4" stroke-linecap="round"/>'
+          f'<rect x="56" y="108" width="90" height="92" rx="34" fill="{SKIN}" stroke="{INK}" stroke-width="{OUT/2+2}"/>'
+          f'<ellipse cx="100" cy="160" rx="34" ry="28" fill="url(#palmglow)"/>')
+    crease = (f'<path d="M80 136 Q100 128 122 134" fill="none" stroke="{SHADE}" stroke-width="2" stroke-linecap="round" opacity=".7"/>' if back else
+              f'<path d="M76 168 Q100 180 126 164" fill="none" stroke="{SHADE}" stroke-width="3.5" stroke-linecap="round"/>'
+              f'<path d="M72 150 Q96 158 118 146" fill="none" stroke="{SHADE}" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>')
     # cover finger bases inside palm
-    cover=f'<rect x="60" y="112" width="82" height="86" rx="31" fill="{SKIN}"/>'
+    cover=f'<rect x="60" y="112" width="82" height="86" rx="31" fill="{SKIN}"/><ellipse cx="100" cy="158" rx="32" ry="26" fill="url(#palmglow)"/>'
     body = "".join(behind) + (tsvg if layer=="back" else "") + palm + cover + crease
     peek=""
     if layer.startswith("peek"):
@@ -80,12 +105,16 @@ def hand(fingers, th, spread=True, touch_f=None, rot=0, back=False, flip=False, 
     body += "".join(front) + peek + (tsvg if layer=="front" else "")
     t=[]
     if flip or back: t.append("translate(200 0) scale(-1 1)")
+    if rot >= 120: t.insert(0, "translate(0 -62) scale(0.92)")
     if rot: t.append(f"rotate({rot} 100 150)")
     g=f'<g transform="{" ".join(t)}">{body}</g>' if t else body
     return g+extra
 
-def svg(inner, vb="-35 -45 270 310"):
-    return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{vb}" width="540" height="620">{inner}</svg>'
+DEFS=('<defs><linearGradient id="skin" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="250">'
+      '<stop offset="0" stop-color="#FBE0CF"/><stop offset="1" stop-color="#F0C2A6"/></linearGradient>'
+      '<radialGradient id="palmglow"><stop offset="0" stop-color="#FFF4EC" stop-opacity=".55"/><stop offset="1" stop-color="#FFF4EC" stop-opacity="0"/></radialGradient></defs>')
+def svg(inner, vb="-30 -40 260 300"):
+    return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{vb}" width="540" height="620">{DEFS}<ellipse cx="100" cy="252" rx="62" ry="7" fill="#3B2620" opacity=".08"/>{inner}</svg>'
 
 ARROWDEF=f'<defs><marker id="a" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="{ARROW}"/></marker></defs>'
 def arrow(d): return ARROWDEF+f'<path d="{d}" fill="none" stroke="{ARROW}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a)"/>'
@@ -102,6 +131,7 @@ def pinch_shape():
             + thick("M70 160 Q110 110 170 120",28)+thick("M80 190 Q130 175 166 130",24)+tip_pad(166,124))
 
 ALL_UP=dict(p="up",r="up",m="up",i="up")
+BACKVIEW=[False]
 FIST=dict(p="curl",r="curl",m="curl",i="curl")
 def F(**k): d=dict(FIST); d.update(k); return d
 

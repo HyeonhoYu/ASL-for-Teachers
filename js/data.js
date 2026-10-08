@@ -344,7 +344,7 @@ const NUMBERS = Array.from({ length: 20 }, (_, i) => i + 1);
 /*
   SIGN CARD PARTS
   Handshape pictures: images/handshapes/<id>.webp (your own photos or drawings).
-  Face pictures: images/faces/<id>.webp (Frog Baby).
+  Faces are drawn in code (see faceSVG in js/app.js).
   Until a picture exists, the card shows the name instead.
 */
 const HANDSHAPES = {
@@ -401,21 +401,23 @@ const MOVEMENTS = {
 };
 
 const FACES = {
-  neutral:    { name: "Neutral", img: "images/faces/neutral.webp" },
-  happy:      { name: "Happy", img: "images/faces/happy.webp" },
-  excited:    { name: "Excited", img: "images/faces/excited.webp" },
-  sad:        { name: "Sad", img: "images/faces/sad.webp" },
-  tired:      { name: "Tired", img: "images/faces/tired.webp" },
-  curious:    { name: "Asking a question", img: "images/faces/curious.webp" },
-  puzzled:    { name: "Puzzled, shake head", img: "" },
-  angry:      { name: "Angry, tense face", img: "" },
-  scared:     { name: "Scared, eyes wide", img: "" },
-  frustrated: { name: "Frustrated", img: "" }
+  neutral:    { name: "Neutral" },
+  happy:      { name: "Happy" },
+  excited:    { name: "Excited" },
+  sad:        { name: "Sad" },
+  tired:      { name: "Tired" },
+  curious:    { name: "Asking a question" },
+  puzzled:    { name: "Puzzled, shake head" },
+  angry:      { name: "Angry, tense face" },
+  scared:     { name: "Scared, eyes wide" },
+  frustrated: { name: "Frustrated" }
 };
 
-/* The "See a reference video" button opens this outside dictionary in a new tab.
-   {word} is replaced with the sign's meaning. Check the link works before publishing. */
-const REFERENCE_URL = "https://www.signingsavvy.com/search/{word}";
+/* Optional "See a reference video" button on each sign page.
+   Leave empty ("") to keep the site fully self-contained with no outside links.
+   To turn it on, put an outside dictionary address here, with {word} where the
+   sign's meaning should go, for example "https://www.example.com/search/{word}". */
+const REFERENCE_URL = "";
 
 /* Short notes shown under letter and number pictures (drafts, review before publishing). */
 const LETTER_NOTES = {

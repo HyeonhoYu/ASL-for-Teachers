@@ -94,18 +94,10 @@ function renderChrome(active) {
 
 /* ---------- Pictures that may not exist yet ----------
    <img data-fallback> hides itself and shows its placeholder if the file is missing. */
-function initFallbacks(root = document) {
-  root.querySelectorAll("img[data-fallback]").forEach(img => {
-    if (img.dataset.watched) return;
-    img.dataset.watched = "1";
-    const box = img.closest(".pic");
-    const mark = () => box && box.classList.add("missing");
-    img.addEventListener("error", mark);
-    if (img.complete && img.naturalWidth === 0) mark();
-  });
-}
+function initFallbacks() { /* kept for older pages; missing pictures are handled by onerror below */ }
+function picMissing(img) { const box = img.closest(".pic"); if (box) box.classList.add("missing"); }
 function picHTML(src, placeholder, alt = "") {
-  return `<span class="pic"><img src="${u(src)}" alt="${esc(alt)}" data-fallback loading="lazy"><span class="ph">${placeholder}</span></span>`;
+  return `<span class="pic"><img src="${u(src)}" alt="${esc(alt)}" decoding="async" onerror="picMissing(this)"><span class="ph">${placeholder}</span></span>`;
 }
 
 /* ---------- Body map (location) ---------- */
@@ -181,22 +173,63 @@ function movementSVG(id) {
   </svg>`;
 }
 
+
+/* ---------- Face drawings (all 10 expressions, drawn in code) ---------- */
+const FACE_PARTS = {
+  neutral:    { brows: "M66 52 Q78 48 88 52 M112 52 Q122 48 134 52", eyes: "dots", mouth: "M88 104 Q100 111 112 104" },
+  happy:      { brows: "M66 50 Q78 45 88 50 M112 50 Q122 45 134 50", eyes: "smile", mouth: "M82 100 Q100 118 118 100" },
+  excited:    { brows: "M64 44 Q78 36 90 44 M110 44 Q122 36 136 44", eyes: "smile", mouth: "open-big" },
+  sad:        { brows: "M68 56 Q80 48 90 46 M110 46 Q120 48 132 56", eyes: "dots", mouth: "M86 110 Q100 100 114 110" },
+  tired:      { brows: "M66 56 Q78 54 88 56 M112 56 Q122 54 134 56", eyes: "lids", mouth: "M92 106 Q100 104 108 106" },
+  curious:    { brows: "M64 40 Q78 32 90 40 M110 40 Q122 32 136 40", eyes: "wide", mouth: "o-small" },
+  puzzled:    { brows: "M66 46 Q78 40 88 46 M112 56 Q122 52 134 50", eyes: "dots", mouth: "M86 106 Q93 101 100 106 Q107 111 114 106", shake: true },
+  angry:      { brows: "M66 46 L90 58 M110 58 L134 46", eyes: "dots", mouth: "M86 110 Q100 102 114 110" },
+  scared:     { brows: "M66 44 Q78 36 90 42 M110 42 Q122 36 134 44", eyes: "wide", mouth: "o-tall" },
+  frustrated: { brows: "M66 50 L90 56 M110 56 L134 50", eyes: "dots", mouth: "M84 108 L92 104 L100 108 L108 104 L116 108", sweat: true }
+};
+function faceSVG(id) {
+  const f = FACE_PARTS[id] || FACE_PARTS.neutral;
+  const ink = "#3B2620";
+  let eyes = "";
+  if (f.eyes === "dots") eyes = `<circle cx="80" cy="74" r="5.5" fill="${ink}"/><circle cx="120" cy="74" r="5.5" fill="${ink}"/>`;
+  if (f.eyes === "smile") eyes = `<path d="M71 76 Q80 66 89 76 M111 76 Q120 66 129 76" fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round"/>`;
+  if (f.eyes === "lids") eyes = `<path d="M71 74 Q80 80 89 74 M111 74 Q120 80 129 74" fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round"/><path d="M72 70 L88 70 M112 70 L128 70" stroke="${ink}" stroke-width="2.5" stroke-linecap="round" opacity=".5"/>`;
+  if (f.eyes === "wide") eyes = `<circle cx="80" cy="72" r="10" fill="#FFFFFF" stroke="${ink}" stroke-width="3"/><circle cx="120" cy="72" r="10" fill="#FFFFFF" stroke="${ink}" stroke-width="3"/><circle cx="80" cy="73" r="5" fill="${ink}"/><circle cx="120" cy="73" r="5" fill="${ink}"/>`;
+  let mouth = `<path d="${f.mouth}" fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if (f.mouth === "open-big") mouth = `<path d="M80 98 Q100 98 120 98 Q118 124 100 124 Q82 124 80 98Z" fill="#A8243A" stroke="${ink}" stroke-width="4" stroke-linejoin="round"/><path d="M88 114 Q100 108 112 114 Q106 122 100 122 Q94 122 88 114Z" fill="#E57A8A"/>`;
+  if (f.mouth === "o-small") mouth = `<ellipse cx="100" cy="106" rx="6" ry="7" fill="#A8243A" stroke="${ink}" stroke-width="3.5"/>`;
+  if (f.mouth === "o-tall") mouth = `<ellipse cx="100" cy="108" rx="8" ry="11" fill="#A8243A" stroke="${ink}" stroke-width="3.5"/>`;
+  const shake = f.shake ? `<path d="M14 84 Q6 74 14 64 M186 84 Q194 74 186 64" fill="none" stroke="#A8243A" stroke-width="4" stroke-linecap="round"/>` : "";
+  const sweat = f.sweat ? `<path d="M150 46 Q158 58 150 64 Q142 58 150 46Z" fill="#8FC9E8" stroke="${ink}" stroke-width="2"/>` : "";
+  const label = FACES[id] ? FACES[id].name : id;
+  return `<svg viewBox="0 0 200 150" class="facemap" role="img" aria-label="Face: ${esc(label)}">
+    <defs><radialGradient id="fs-${id}" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#FBE0CF"/><stop offset="1" stop-color="#F0C2A6"/></radialGradient></defs>
+    <ellipse cx="100" cy="144" rx="56" ry="5" fill="#3B2620" opacity=".08"/>
+    <circle cx="44" cy="80" r="11" fill="#F0C2A6" stroke="${ink}" stroke-width="3"/><circle cx="156" cy="80" r="11" fill="#F0C2A6" stroke="${ink}" stroke-width="3"/>
+    <circle cx="100" cy="80" r="58" fill="url(#fs-${id})" stroke="${ink}" stroke-width="3.5"/>
+    <path d="M42 74 Q42 22 100 22 Q158 22 158 74 Q146 46 100 44 Q54 46 42 74Z" fill="#6B3F2A" stroke="${ink}" stroke-width="3.5" stroke-linejoin="round"/>
+    <circle cx="100" cy="16" r="11" fill="#6B3F2A" stroke="${ink}" stroke-width="3.5"/>
+    <path d="M100 -6 l3.5 7 7.5 1 -5.5 5 1.3 7.5 -6.8 -3.6 -6.8 3.6 1.3 -7.5 -5.5 -5 7.5 -1z" fill="#F2B83B" stroke="${ink}" stroke-width="2" transform="translate(0 8) scale(1)"/>
+    <ellipse cx="68" cy="94" rx="10" ry="6" fill="#F29BA8" opacity=".55"/><ellipse cx="132" cy="94" rx="10" ry="6" fill="#F29BA8" opacity=".55"/>
+    <path transform="translate(0 9)" d="${f.brows}" fill="none" stroke="#6B3F2A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${eyes}${mouth}${shake}${sweat}
+  </svg>`;
+}
+
 /* ---------- The sign card ---------- */
 const HANDS_TEXT = { one: "One hand", both: "Both hands", base: "One hand works on the other hand" };
 
 function recipeHTML(s, opts = {}) {
   const r = s.recipe || {};
   const face = FACES[r.face] || FACES.neutral;
-  const faceHTML = face.img
-    ? picHTML(face.img, "", `Frog Baby, ${face.name} face`)
-    : `<span class="pic missing"><span class="ph">${esc(face.name)}</span></span>`;
+  const faceHTML = faceSVG(FACES[r.face] ? r.face : "neutral");
   if (r.compound) {
     return `<div class="recipe compound">
       <div class="part"><h3>Two or more signs together</h3>
         <div class="row" style="gap:10px">${r.compound.map((p, i) => `${i ? '<span class="plus" aria-hidden="true">+</span>' : ""}<span class="chunk">${esc(p)}</span>`).join("")}</div>
         <p class="muted small">${esc(s.summary)}</p>
       </div>
-      <div class="part"><span class="part-label">Face</span><div class="face">${faceHTML}</div><p class="part-name">${esc(face.name)}</p></div>
+      <div class="part"><span class="part-label">Face</span><div class="face-box">${faceHTML}</div><p class="part-name">${esc(face.name)}</p></div>
     </div>`;
   }
   const hand = HANDSHAPES[r.hand] || { name: r.hand, tip: "" };
@@ -222,7 +255,7 @@ function recipeHTML(s, opts = {}) {
     </div>
     <div class="part">
       <span class="part-label">4. Face</span>
-      <div class="face">${faceHTML}</div>
+      <div class="face-box">${faceHTML}</div>
       <p class="part-name">${esc(face.name)}</p>
     </div>
   </div>`;

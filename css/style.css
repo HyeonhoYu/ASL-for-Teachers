@@ -1,3 +1,12 @@
+/* Fonts are stored in this project (SIL Open Font License). No outside services are used. */
+@font-face { font-family: "Fredoka"; font-style: normal; font-weight: 500; font-display: swap; src: url("../fonts/fredoka-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Fredoka"; font-style: normal; font-weight: 600; font-display: swap; src: url("../fonts/fredoka-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Fredoka"; font-style: normal; font-weight: 700; font-display: swap; src: url("../fonts/fredoka-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 400; font-display: swap; src: url("../fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-style: italic; font-weight: 400; font-display: swap; src: url("../fonts/atkinson-hyperlegible-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 700; font-display: swap; src: url("../fonts/atkinson-hyperlegible-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-style: italic; font-weight: 700; font-display: swap; src: url("../fonts/atkinson-hyperlegible-latin-700-italic.woff2") format("woff2"); }
+
 :root {
   --ground: #F7F1F2;
   --surface: #FFFFFF;
@@ -304,3 +313,6 @@ a.card { transition: transform .15s ease, border-color .15s ease; }
 @media (max-width: 520px) { .sotd-buddy { display: none; } }
 .feature-card .gloss.long { font-size: clamp(22px, 2.2vw, 28px); }
 .sotd-art img { transform: none; }
+
+.face-box { background: var(--gold-tint); border-radius: 18px; padding: 8px 6px 0; }
+.facemap { width: 100%; display: block; overflow: visible; }

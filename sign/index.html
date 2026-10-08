@@ -6,9 +6,6 @@
 <title>Sign | ASL for Teachers</title>
 <meta name="description" content="American Sign Language and Deaf culture for preservice teachers.">
 <link rel="icon" href="../images/favicon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
@@ -55,8 +52,7 @@ document.getElementById("sign").innerHTML = `
     <div class="row" style="gap:12px">
       <button class="btn toggle learned" id="learnedBtn" aria-pressed="${learned}">${learned ? "Learned" : "Mark as learned"}</button>
       <a class="btn btn-outline" href="${u(`mirror/?id=${s.id}`)}">Practice in the mirror</a>
-      <a class="btn btn-small btn-outline ref-btn" href="${referenceURL(s)}" target="_blank" rel="noopener">See a reference video</a>
-      <span class="ref-note">Opens an outside dictionary in a new tab.</span>
+      ${REFERENCE_URL ? `<a class="btn btn-small btn-outline ref-btn" href="${referenceURL(s)}" target="_blank" rel="noopener">See a reference video</a><span class="ref-note">Opens an outside dictionary in a new tab.</span>` : ""}
     </div>
   </section>
   <div class="detail">

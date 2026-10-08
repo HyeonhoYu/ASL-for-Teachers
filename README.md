@@ -2,7 +2,7 @@
 
 A website that helps preservice teachers learn everyday classroom signs in American Sign Language (ASL) and the Deaf culture behind them. Guided by the character Frog Baby.
 
-Every sign is shown as a **sign card** with four parts: handshape, location, movement, and face. All pictures and content, including every hand drawing, are created for this project. The only outside material is an optional "See a reference video" button that opens an outside dictionary in a new tab.
+Every sign is shown as a **sign card** with four parts: handshape, location, movement, and face. Everything the site shows is stored in this project: the Frog Baby pictures, every hand and face drawing, the fonts, and all lesson content. The site loads nothing from outside services and works even with no internet connection once it is opened.
 
 This is a plain static website (HTML, CSS, and JavaScript). There is nothing to install or build, so it runs on GitHub Pages as is.
 
@@ -56,7 +56,7 @@ All pictures are included and made for this project:
 | 15 handshapes | `images/handshapes/<id>.svg` |
 | Alphabet A to Z | `images/letters/a.svg` to `z.svg` |
 | Numbers 1 to 20 | `images/numbers/1.svg` to `20.svg` |
-| Frog Baby faces | `images/faces/<id>.webp` |
+| Face expressions (10) | Drawn in code by `faceSVG` in `js/app.js` |
 | Frog Baby poses | `images/*.webp` |
 
 The hand pictures are drawn by `tools/draw-hands.py`. Each hand is described in a short table (which fingers are up, bent, or curled, where the thumb is, and any movement arrow). To change a picture, edit its line in the table at the bottom of that file and run `python3 tools/draw-hands.py`. You can also replace any `.svg` file with your own picture under the same name.
@@ -67,9 +67,13 @@ The pictures show a right hand as you see it on someone facing you. They are sim
 
 Open `js/data.js` and copy an existing entry in `SIGNS`. Set its `recipe` using the ids in `HANDSHAPES`, `LOCATIONS`, `MOVEMENTS`, and `FACES`. When a reviewer has checked a sign, add `reviewed: true` and the draft label disappears.
 
-## Reference button
+## Fonts
 
-`REFERENCE_URL` at the end of `js/data.js` sets which outside dictionary the "See a reference video" button opens. Check that the link works, or change it to a dictionary you prefer.
+Fredoka and Atkinson Hyperlegible are stored in `fonts/` under the SIL Open Font License (license files included). No font service is used.
+
+## Optional reference button
+
+`REFERENCE_URL` in `js/data.js` is empty, so no outside links appear. If you ever want a "See a reference video" button on each sign page, put an outside dictionary address there.
 
 ## Important
 
